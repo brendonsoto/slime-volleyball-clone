@@ -5,6 +5,11 @@ interface player {
   color: string
 }
 
+interface ball {
+  x: number
+  y: number
+}
+
 // Canvas stuff
 const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
@@ -12,6 +17,8 @@ const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 
 // GLOBALS
 // Dimenstions and boundaries
+// Why aren't player/ball dimensions part of the player object?
+// Because they don't change
 const playerDeltaX = 2
 const playerRadius: number = 40
 const wallHeight: number = playerRadius * 4
@@ -22,6 +29,7 @@ const wallLeftBoundary: number = wallX
 const wallRightBoundary:  number = wallX + wallWidth
 const playerOneRightBoundary: number = wallLeftBoundary - 2 * playerRadius
 const playerTwoRightBoundary: number = canvas.width - 2 * playerRadius
+const ballRadius = playerRadius / 2
 
 // Flags to indicate movement.
 // Not attached to player objects to save having to traverse through an object
@@ -40,6 +48,10 @@ let player2: player = {
   x: canvas.width - playerRadius * 2,
   y: canvas.height,
   color: "red"
+}
+let ball: ball = {
+  x: canvas.width / 2,
+  y: canvas.height / 2
 }
 
 
@@ -121,10 +133,19 @@ const drawPlayer = (player: player) => {
   ctx.closePath()
 }
 
+const drawBall = (): void => {
+  ctx.beginPath()
+  ctx.arc(ball.x, ball.y, ballRadius, 0, 2 * Math.PI, true)
+  ctx.fillStyle = "blue"
+  ctx.fill()
+  ctx.closePath()
+}
+
 const draw = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   drawWall()
+  drawBall()
   drawPlayer(player1)
   drawPlayer(player2)
 
