@@ -9,7 +9,8 @@ Because the game has simple rules and focuses on the movements of two characters
 ## Gameplan
 - [X] Create the scene (just a wall in the middle)
 - [X] Make characters (just two)
-- [ ] Introduce movement (between one side of the canvas and the wall)
+- [X] Introduce movement using keys (between one side of the canvas and the wall)
+- [ ] Introduce jumping
 - [ ] Create ball
 - [ ] Add basic physics to it
 - [ ] Add basic end game logic
