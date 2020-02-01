@@ -29,6 +29,10 @@ const wallLeftBoundary: number = wallX
 const wallRightBoundary:  number = wallX + wallWidth
 const playerOneRightBoundary: number = wallLeftBoundary - 2 * playerRadius
 const playerTwoRightBoundary: number = canvas.width - 2 * playerRadius
+const playerOneStartingPoint: number = playerOneRightBoundary / 2
+const playerTwoStartingPoint: number = (wallRightBoundary + playerTwoRightBoundary) / 2
+const ballStartingPointOne: number = playerOneStartingPoint + playerRadius
+const ballStartingPointTwo: number = playerTwoStartingPoint + playerRadius
 const ballRadius = playerRadius / 2
 
 // Flags to indicate movement.
@@ -40,17 +44,17 @@ let pTwoLeftPressed: boolean = false
 
 // Player objects
 let player1: player = {
-  x: 0,
+  x: playerOneStartingPoint,
   y: canvas.height,
   color: "green"
 }
 let player2: player = {
-  x: canvas.width - playerRadius * 2,
+  x: playerTwoStartingPoint,
   y: canvas.height,
   color: "red"
 }
 let ball: ball = {
-  x: canvas.width / 2,
+  x: ballStartingPointOne,
   y: canvas.height / 2
 }
 
