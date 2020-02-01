@@ -1,4 +1,4 @@
-// Interfaces
+// INTERFACES
 interface player {
   x: number
   y: number
@@ -10,7 +10,8 @@ const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 
 
-// Globals
+// GLOBALS
+// Dimenstions and boundaries
 const playerDeltaX = 2
 const playerRadius: number = 40
 const wallHeight: number = playerRadius * 4
@@ -21,11 +22,15 @@ const wallLeftBoundary: number = wallX
 const wallRightBoundary:  number = wallX + wallWidth
 const playerOneRightBoundary: number = wallLeftBoundary - 2 * playerRadius
 const playerTwoRightBoundary: number = canvas.width - 2 * playerRadius
+
+// Flags to indicate movement.
+// Not attached to player objects to save having to traverse through an object
 let pOneRightPressed: boolean = false
 let pTwoRightPressed: boolean = false
 let pOneLeftPressed: boolean = false
 let pTwoLeftPressed: boolean = false
 
+// Player objects
 let player1: player = {
   x: 0,
   y: canvas.height,
@@ -38,7 +43,7 @@ let player2: player = {
 }
 
 
-// Helpers
+// HELPERS
 const keyDownHandler = (e: KeyboardEvent): void => {
   if (e.key === "Right" || e.key === "ArrowRight") {
     pTwoRightPressed = true
@@ -92,7 +97,7 @@ const determineMovements = ():void => {
 }
 
 
-// Drawing
+// DRAWING
 const drawWall = () => {
   ctx.beginPath()
   ctx.rect(wallX, wallY, wallWidth, wallHeight)
@@ -130,9 +135,10 @@ const draw = () => {
 }
 
 
-// Event listeners
+// EVENT LISTENERS
 document.addEventListener("keydown", keyDownHandler)
 document.addEventListener("keyup", keyUpHandler)
 
 
+// MAIN
 draw()
