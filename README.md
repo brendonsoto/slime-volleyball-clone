@@ -4,3 +4,13 @@ This is a project to explore both making games and using other computers as cont
 
 Why slime volleyball?
 Because the game has simple rules and focuses on the movements of two characters to be controlled by two players. It is an opportunity to test multi touch capabilities combined with communicating via web sockets.
+
+
+## Gameplan
+- [X] Create the scene (just a wall in the middle)
+- [X] Make characters (just two)
+- [ ] Introduce movement (between one side of the canvas and the wall)
+- [ ] Create ball
+- [ ] Add basic physics to it
+- [ ] Add basic end game logic
+- [ ] Add ability to have rounds (best of 3)
