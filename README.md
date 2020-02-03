@@ -12,6 +12,6 @@ Because the game has simple rules and focuses on the movements of two characters
 - [X] Introduce movement using keys (between one side of the canvas and the wall)
 - [X] Create ball
 - [X] Introduce jumping
-- [ ] Add basic physics to it
+- [X] Add basic physics to it
 - [ ] Add basic end game logic
 - [ ] Add ability to have rounds (best of 3)

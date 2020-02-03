@@ -27,7 +27,7 @@ const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 
 // Player movement and dimensions
 const playerDeltaX = 2
-const playerInitialDeltaY = -10
+const playerInitialDeltaY = -4
 const playerRadius: number = 40
 
 // Wall
@@ -74,9 +74,9 @@ let player2: player = {
   color: "red"
 }
 let ball: ball = {
-  x: ballStartingPointOne,
+  x: ballStartingPointTwo,
   y: canvas.height / 2,
-  dx: 2,
+  dx: 0,
   dy: 0
 }
 
@@ -84,7 +84,7 @@ let ball: ball = {
 // kudos to http://physicscodes.com/bouncing-ball-simulation-in-javascript-on-html5-canvas/
 const gravity: number = 0.1
 const velocityReduction: number = 0.8
-const jumpModifier: number = 0.5
+const collisionRadius: number = playerRadius + ballRadius
 
 
 // HELPERS
@@ -132,12 +132,12 @@ const updateJumps = (player: player):void => {
   // Initially, dy is negative, so by decreasing y we're getting further awawy from the bottom of the canvas
   player.y += player.dy
 
-  if (player.y === canvas.height) {
+  if (player.y >= canvas.height) {
     player.y = canvas.height
     player.dy = playerInitialDeltaY
     player.isJumping = false
   } else {
-    player.dy += jumpModifier
+    player.dy += gravity
   }
 }
 
@@ -177,12 +177,66 @@ const updateBall = ():void => {
   // Update velocity
   ball.dy += gravity
 
-  // ball.x += ball.dx
+  ball.x += ball.dx
   ball.y += ball.dy
 
-  if (ball.y > canvas.height - ballRadius - playerRadius) {
-    ball.y = canvas.height - ballRadius - playerRadius
+  // TODO This is the game over/match over condition
+  if (ball.y > canvas.height - ballRadius) {
+    ball.y = canvas.height
     ball.dy *= -velocityReduction
+  }
+
+  // Check if the ball is hitting the left or right walls and invert direction if so
+  if (
+    ball.x - ballRadius <= 0 ||
+    ball.x + ballRadius >= canvas.width
+  ) {
+    ball.dx *= -1
+  }
+
+  // Check if the ball is hitting the wall and invert direction if so
+  if (
+    ball.x + ballRadius >= wallLeftBoundary &&
+    ball.x - ballRadius <= wallRightBoundary &&
+    ball.y >= wallY
+  ) {
+    ball.dx *= -1
+
+    // Check if the ball hits the top of the wall
+    if (ball.y === wallY || ball.y < wallY + 5) {
+      ball.dy *= -1
+    }
+  }
+}
+
+// Super basic collision detection
+const checkContact = (player: player):void => {
+  const dx = (player.x + playerRadius) - (ball.x)
+  const dy = (player.y) - (ball.y)
+  const radii = playerRadius + ballRadius
+  const hypotenuse = dx * dx + dy * dy
+
+  // Read that not using Math.sqrt was preferrable, hence this
+  if (hypotenuse < radii * radii) {
+    // Contact is made, but now to determine velocity
+    // To be perfectly honest, my trig skills currently suck so a lot of this was guess and check
+    // I tried to get a doc product using the difference between the two circles as vectors
+    const vx = ball.x - (player.x + playerRadius)
+    const vy = (ball.y + ballRadius) - player.y
+    const vHypo = vx * vx + vy + vy
+    const cos = vx / vHypo
+    const dotProduct = Math.abs(vx) * Math.abs(vy) * cos
+    // The magic numbers here (10 & 8) are just guess and check
+    ball.dy = dx === 0 ? -10 : -1 * (8 % dotProduct)
+    ball.dx = dx === 0 ? 0 : -1 * (dx / playerRadius) * 8
+  }
+}
+
+const collisionDetection = ():void => {
+  if (ball.x < wallLeftBoundary) {
+    checkContact(player1)
+  } else if (ball.x > wallRightBoundary) {
+    checkContact(player2)
   }
 }
 
@@ -231,6 +285,7 @@ const draw = () => {
   // Update positioning
   updateBall()
   determinePlayerMovements()
+  collisionDetection()
 
   // Queue next frame
   requestAnimationFrame(draw)
