@@ -13,5 +13,7 @@ Because the game has simple rules and focuses on the movements of two characters
 - [X] Create ball
 - [X] Introduce jumping
 - [X] Add basic physics to it
-- [ ] Add basic end game logic
-- [ ] Add ability to have rounds (best of 3)
+- [X] Add basic end game logic
+- [X] Add ability to have rounds (best of 3)
+- [ ] Add music?
+- [ ] Add other controllers

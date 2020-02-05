@@ -5,6 +5,7 @@ interface player {
   dy: number // delta y -- the change in y (velocity)
   isJumping: boolean
   color: string
+  score : number
 }
 
 interface ball {
@@ -24,10 +25,11 @@ const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 // Dimenstions and boundaries
 // Why aren't player/ball dimensions part of the player object?
 // Because they don't change
+const scoreToWin: number = 3
 
 // Player movement and dimensions
-const playerDeltaX = 2
-const playerInitialDeltaY = -4
+const playerDeltaX: number = 4
+const playerInitialDeltaY: number = -4
 const playerRadius: number = 40
 
 // Wall
@@ -64,17 +66,19 @@ let player1: player = {
   y: canvas.height,
   dy: playerInitialDeltaY,
   isJumping: false,
-  color: "green"
+  color: "green",
+  score: 0
 }
 let player2: player = {
   x: playerTwoStartingPoint,
   y: canvas.height,
   dy: playerInitialDeltaY,
   isJumping: false,
-  color: "red"
+  color: "red",
+  score: 0
 }
 let ball: ball = {
-  x: ballStartingPointTwo,
+  x: ballStartingPointOne,
   y: canvas.height / 2,
   dx: 0,
   dy: 0
@@ -173,6 +177,25 @@ const determinePlayerMovements = ():void => {
   if (player2.isJumping) { updateJumps(player2) }
 }
 
+// NOTE Resets positions and increments scores
+const resetPositions = (): void => {
+  if (ball.x < wallLeftBoundary) {
+    ball.x = playerOneStartingPoint + playerRadius
+    player2.score += 1
+  } else {
+    ball.x = playerTwoStartingPoint + playerRadius
+    player1.score += 1
+  }
+  player1.x = playerOneStartingPoint
+  player1.y = canvas.height
+  player2.x = playerTwoStartingPoint
+  player2.y = canvas.height
+  ball.dy = 0
+  ball.y = canvas.height / 2
+  ball.dy = 0
+  ball.dx = 0
+}
+
 const updateBall = ():void => {
   // Update velocity
   ball.dy += gravity
@@ -180,10 +203,8 @@ const updateBall = ():void => {
   ball.x += ball.dx
   ball.y += ball.dy
 
-  // TODO This is the game over/match over condition
   if (ball.y > canvas.height - ballRadius) {
-    ball.y = canvas.height
-    ball.dy *= -velocityReduction
+    resetPositions()
   }
 
   // Check if the ball is hitting the left or right walls and invert direction if so
@@ -200,11 +221,12 @@ const updateBall = ():void => {
     ball.x - ballRadius <= wallRightBoundary &&
     ball.y >= wallY
   ) {
-    ball.dx *= -1
-
-    // Check if the ball hits the top of the wall
+    // Check if the ball hits the top of the wall and reverse vertical direction
     if (ball.y === wallY || ball.y < wallY + 5) {
       ball.dy *= -1
+    } else {
+      // If it does not, then reverse horizontal direction
+      ball.dx *= -1
     }
   }
 }
@@ -265,6 +287,12 @@ const drawPlayer = (player: player) => {
   ctx.closePath()
 }
 
+const drawScore = (): void => {
+  ctx.font = "48px Helvetica, sans-serif"
+  ctx.fillText(player1.score.toString(), 20, 60)
+  ctx.fillText(player2.score.toString(), canvas.width - 50, 60)
+}
+
 const drawBall = (): void => {
   ctx.beginPath()
   ctx.arc(ball.x, ball.y, ballRadius, 0, 2 * Math.PI, true)
@@ -273,14 +301,33 @@ const drawBall = (): void => {
   ctx.closePath()
 }
 
+const drawGameOver = (): void => {
+  const winner = player1.score > player2.score
+    ? "Player 1"
+    : "Player 2"
+  ctx.font = "48px Helvetica, sans-serif"
+  ctx.textAlign = "center"
+  ctx.fillText(
+    `${winner} wins!!`,
+    canvas.width / 2,
+    canvas.height / 2 + 24
+  )
+}
+
 const draw = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  if (player1.score === scoreToWin || player2.score === scoreToWin) {
+    drawGameOver()
+    return
+  }
 
   // Draw
   drawWall()
   drawBall()
   drawPlayer(player1)
   drawPlayer(player2)
+  drawScore()
 
   // Update positioning
   updateBall()
