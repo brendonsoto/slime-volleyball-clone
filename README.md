@@ -15,5 +15,5 @@ Because the game has simple rules and focuses on the movements of two characters
 - [X] Add basic physics to it
 - [X] Add basic end game logic
 - [X] Add ability to have rounds (best of 3)
-- [ ] Add music?
-- [ ] Add other controllers
+- [ ] Add background music
+- [ ] Add sound effects
