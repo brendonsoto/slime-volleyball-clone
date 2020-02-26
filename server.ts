@@ -1,31 +1,42 @@
-import express = require("express")
-import http = require("http")
-import socketio = require("socket.io")
-import path = require("path")
+const app = require("http").createServer(handler)
+const io = require("socket.io")(app)
+const fs = require("fs")
 
-const app = express()
-const httpBase = http.createServer(app)
-const io = socketio(httpBase)
-const port = 9000
+app.listen(8080)
 
+function get404 (res) {
+  res.writeHead(404)
+  res.end("Error: Page not found")
+}
 
-app.get("/", (_, res) => {
-  // Send game
-  res.sendFile(path.join(__dirname, "build/index.html"))
+function getHTML (res, file) {
+  fs.readFile(`${__dirname}/build/${file}.html`, (err: Error, data: string) => {
+    if (err) {
+      res.writeHead(500)
+      return res.end(`Error loading ${file}.html`)
+    }
 
-  console.log("creating controller route")
-  // Create controller only when the root route is hit
-  app.get("/controller", (_, res) => {
-    // Send the markup
-    res.sendFile(path.join(__dirname, "build/controller.html"))
-
-    // Then make the websocket connection
-    io.on("connection", () => {
-      console.log("a user connected")
-    })
+    res.writeHead(200)
+    res.end(data)
   })
-})
+}
 
-app.listen(port, () => {
-  console.log(`server started at ${port}`)
+function handler (req, res) {
+  switch (req.url) {
+    case "/":
+      getHTML(res, "index")
+      break
+    case "/controller":
+      getHTML(res, "controller")
+      break
+    default:
+      get404(res)
+  }
+}
+
+io.on("connection", (socket: SocketIO.Server) => {
+  socket.emit("news", { hello: "world" })
+  socket.on("my other event", (data: string)=> {
+    console.log(data)
+  })
 })
