@@ -36,5 +36,8 @@ module.exports = {
     rules: [
       { test: /\.tsx?/, loader: "ts-loader" }
     ]
+  },
+  devServer: {
+    port: 9001
   }
 }

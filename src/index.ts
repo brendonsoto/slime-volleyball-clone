@@ -1,3 +1,11 @@
+import io from "socket.io-client"
+
+const socket = io("http://localhost:9000")
+
+socket.on("gameAction", data => {
+  console.log(data)
+})
+
 // INTERFACES
 interface player {
   x: number
@@ -48,17 +56,15 @@ const playerTwoStartingPoint: number = (wallRightBoundary + playerTwoRightBounda
 
 // Ball positioning and dimensions
 const ballStartingPointOne: number = playerOneStartingPoint + playerRadius
-const ballStartingPointTwo: number = playerTwoStartingPoint + playerRadius
+// const ballStartingPointTwo: number = playerTwoStartingPoint + playerRadius
 const ballRadius = playerRadius / 2
 
 // Flags to indicate movement.
 // Not attached to player objects to save having to traverse through an object
 let pOneRightPressed: boolean = false
 let pOneLeftPressed: boolean = false
-let pOneIsJumping: boolean = false
 let pTwoRightPressed: boolean = false
 let pTwoLeftPressed: boolean = false
-let pTwoUpPressed: boolean = false
 
 // Player objects
 let player1: player = {
@@ -87,8 +93,8 @@ let ball: ball = {
 // Physics vars
 // kudos to http://physicscodes.com/bouncing-ball-simulation-in-javascript-on-html5-canvas/
 const gravity: number = 0.1
-const velocityReduction: number = 0.8
-const collisionRadius: number = playerRadius + ballRadius
+// const velocityReduction: number = 0.8
+// const collisionRadius: number = playerRadius + ballRadius
 
 
 // HELPERS

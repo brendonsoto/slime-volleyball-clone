@@ -2,7 +2,7 @@ const app = require("http").createServer(handler)
 const io = require("socket.io")(app)
 const fs = require("fs")
 
-app.listen(8080)
+app.listen(9000)
 
 function get404 (res) {
   res.writeHead(404)
@@ -34,9 +34,9 @@ function handler (req, res) {
   }
 }
 
-io.on("connection", (socket: SocketIO.Server) => {
-  socket.emit("news", { hello: "world" })
-  socket.on("my other event", (data: string)=> {
+io.on("connection", (socket) => {
+  socket.on("controller event", (data: string) => {
     console.log(data)
+    socket.broadcast.emit("gameAction", data)
   })
 })
