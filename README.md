@@ -15,6 +15,12 @@ Because the game has simple rules and focuses on the movements of two characters
 - [X] Add basic physics to it
 - [X] Add basic end game logic
 - [X] Add ability to have rounds (best of 3)
-- [ ] Add communication logic w/ server and websockets
-- [ ] Add background music
-- [ ] Add sound effects
+- [X] Add communication logic w/ server and websockets
+- [ ] Game Polish:
+  - [ ] Add menu
+  - [ ] Add background music
+  - [ ] Add sound effects
+  - [ ] Add indicators as to who's player one and who's player two (maybe with colors?)
+  - [ ] Add types
+- [ ] Server polish:
+  - [ ] Add rooms and hashes to isolate players
