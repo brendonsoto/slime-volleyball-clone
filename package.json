@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack -p",
-    "start": "webpack-dev-server -d --content-base ./build",
+    "start": "webpack-dev-server -d --host 0.0.0.0 --content-base ./build",
     "server": "nodemon ./server.ts"
   },
   "keywords": [],

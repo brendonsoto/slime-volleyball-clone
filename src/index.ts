@@ -68,7 +68,7 @@ const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 const scoreToWin: number = 3
 
 // Player movement and dimensions
-const playerDeltaX: number = 4
+const playerDeltaX: number = 6
 const playerInitialDeltaY: number = -4
 const playerRadius: number = 40
 

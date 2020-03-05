@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
   <title>Slime Volleyball Clone -- Controller</title>
   <style>
 * {
@@ -19,24 +20,32 @@ body {
   flex-flow: row nowrap;
   justify-content: flex-start;
 }
-div {
+.btn-container {
   display: flex;
   flex: 1 0 auto;
   height: 100%;
 }
-button {
-  height: 100%;
+.btn {
+  align-items: center;
+  background-color: #282828;
+  border: 1px solid #3c3c3c;
+  color: #ebdbb2;
+  display: flex;
+  font-family: sans-serif;
+  font-size: 32px;
+  justify-content: center;
+  user-select: none;
   width: 100%;
 }
   </style>
 </head>
 <body>
-  <div>
-    <button id="left">Left</button>
-    <button id="right">Right</button>
+  <div class="btn-container">
+    <div class="btn" id="left">Left</div>
+    <div class="btn" id="right">Right</div>
   </div>
-  <div>
-    <button id="jump">Jump</button>
+  <div class="btn-container">
+    <div class="btn" id="jump">Jump</div>
   </div>
 </body>
 </html>
