@@ -12,30 +12,32 @@ const jump: HTMLElement = document.getElementById("jump")
 
 
 // Globals
-let dataToSend = {}
 let isMouseDown: boolean = false;
 
-const triggerMouseDownLoop = () => {
+const triggerMouseDownLoop = (data) => () => {
   if (isMouseDown) {
-    socket.emit("controller event", dataToSend)
-    requestAnimationFrame(triggerMouseDownLoop)
+    socket.emit("controller event", data)
+    requestAnimationFrame(triggerMouseDownLoop(data))
   }
 }
 
 // Actions
-const createButtonEvents = (elem, actionData) => {
-  elem.addEventListener("mousedown", () => {
-    isMouseDown = true
-    dataToSend = actionData
-    triggerMouseDownLoop()
-  })
-  elem.addEventListener("mouseup", () => {
-    isMouseDown = false
-  })
-}
-
-createButtonEvents(left, { move: "left" })
-createButtonEvents(right, { move: "right" })
+left.addEventListener("mousedown", () => {
+  isMouseDown = true
+  triggerMouseDownLoop({ move: "left" })()
+})
+left.addEventListener("mouseup", () => {
+  isMouseDown = false
+  socket.emit("controller event", { move: "stop" })
+})
+right.addEventListener("mousedown", () => {
+  isMouseDown = true
+  triggerMouseDownLoop({ move: "right" })()
+})
+right.addEventListener("mouseup", () => {
+  isMouseDown = false
+  socket.emit("controller event", { move: "stop" })
+})
 
 // Jump does not use the mouse down loop since you can't continually jump
 jump.addEventListener("mousedown", () => {

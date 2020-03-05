@@ -1,10 +1,38 @@
 import io from "socket.io-client"
 
+// SOCKETS
 const socket = io("http://localhost:9000")
+const handleGameAction = (data: gameAction) => {
+  const { move, playerNum } = data;
 
-socket.on("gameAction", data => {
-  console.log(data)
-})
+  if (move === "left") {
+    if (playerNum === 0) { pOneLeftPressed = true }
+    if (playerNum === 1) { pTwoLeftPressed = true }
+  }
+
+  if (move === "right") {
+    if (playerNum === 0) { pOneRightPressed = true }
+    if (playerNum === 1) { pTwoRightPressed = true }
+  }
+
+  if (move === "jump") {
+    if (playerNum === 0) { player1.isJumping = true }
+    if (playerNum === 1) { player2.isJumping = true }
+  }
+
+  if (move === "stop") {
+    if (playerNum === 0) {
+      pOneLeftPressed = false
+      pOneRightPressed = false
+    }
+    if (playerNum === 1) {
+      pTwoLeftPressed = false
+      pTwoRightPressed = false
+    }
+  }
+}
+
+socket.on("gameAction", handleGameAction)
 
 // INTERFACES
 interface player {
@@ -23,6 +51,10 @@ interface ball {
   dy: number
 }
 
+interface gameAction {
+  move: string,
+  playerNum: number
+}
 
 // Canvas stuff
 const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")

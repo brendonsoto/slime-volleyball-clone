@@ -34,9 +34,29 @@ function handler (req, res) {
   }
 }
 
+let players = []
+
 io.on("connection", (socket) => {
-  socket.on("controller event", (data: string) => {
-    console.log(data)
-    socket.broadcast.emit("gameAction", data)
+  // Using the referer to check what page the user is on
+  // Assigning players only if they're on the controller page
+  // Using the socket.id to identify players
+  if (socket.handshake.headers.referer.includes("controller")) {
+    players = [...players, socket.id]
+  }
+
+  // Using `function` instead of arrow to referrence the socket object
+  // Using indices of the players array to determine player 1, 2, etc.
+  // Sending the player number to allow the client to handle how to react
+  socket.on("controller event", function (data: object) {
+    const playerNum = players.indexOf(this.id)
+    socket.broadcast.emit("gameAction", { ...data, playerNum })
+  })
+
+  socket.on("disconnect", function () {
+    const pageDisconnectingFrom = this.handshake.headers.referer
+    const playerId = this.id
+    if (pageDisconnectingFrom.includes("controller")) {
+      players = players.filter(id => id !== playerId)
+    }
   })
 })
