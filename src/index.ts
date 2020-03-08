@@ -73,7 +73,7 @@ let player1: player = {
   y: canvas.height,
   dy: playerInitialDeltaY,
   isJumping: false,
-  color: "green",
+  color: "#98971a",
   score: 0
 }
 let player2: player = {
@@ -81,7 +81,7 @@ let player2: player = {
   y: canvas.height,
   dy: playerInitialDeltaY,
   isJumping: false,
-  color: "red",
+  color: "#cc241d",
   score: 0
 }
 let ball: ball = {
@@ -337,7 +337,7 @@ const drawScore = (): void => {
 const drawBall = (): void => {
   ctx.beginPath()
   ctx.arc(ball.x, ball.y, ballRadius, 0, 2 * Math.PI, true)
-  ctx.fillStyle = "blue"
+  ctx.fillStyle = "#458588"
   ctx.fill()
   ctx.closePath()
 }

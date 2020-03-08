@@ -37,7 +37,7 @@ form.addEventListener("submit", e => {
 
 // Socket
 socket.on("player assign", num => {
-  const color: string = num === 1 ?  "green" : "red"
+  const color: string = num === 1 ?  "#98971a" : "#cc241d"
   Array.prototype.forEach.call(
     document.getElementsByClassName("btn"),
     elem => { elem.style.backgroundColor = color }

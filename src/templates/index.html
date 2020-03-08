@@ -10,23 +10,30 @@
 }
 
 html {
-  background-color: rgb(245, 237, 221);
+  background-color: #d5c4a1;
+  color: #3c3836;
+  font-family: sans-serif;
 }
 
 canvas {
-  background: #eee;
-  border: 1px solid black;
+  background: #fbf1c7;
+  border: 1px solid #282828;
   display: block;
-  margin: 0 auto;
+  margin: 0 auto 20px;
 }
 
 h1, #join-code {
   text-align: center;
 }
+
 h1 {
   padding: 20px;
 }
+
 #join-code {
+  font-size: 20px;
+  height: 20px;
+  line-height: 20px;
   padding: 10px;
 }
   </style>
@@ -34,6 +41,6 @@ h1 {
 <body>
   <h1>Slime Volleyball Clone</h1>
   <div id="join-code"></div>
-  <canvas id="gameRoot" width="1240" height="680"></canvas>
+  <canvas id="gameRoot" width="1240" height="600"></canvas>
 </body>
 </html>
