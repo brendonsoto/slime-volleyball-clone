@@ -23,6 +23,7 @@ interface gameAction {
   playerNum: number
 }
 
+
 // Canvas + DOM getting stuff
 const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")
 const idContainer = <HTMLElement> document.getElementById("join-code")
@@ -132,45 +133,45 @@ const handleRecievedRoomId = id => {
   idContainer.innerText = `Join the game by visiting ${location.href}/controller.html and enter this code: ${id}`
 }
 
-const keyDownHandler = (e: KeyboardEvent): void => {
-  // Player 1 left/right controls
-  if (e.key === "d") {
-    pOneRightPressed = true
-  } else if (e.key === "a") {
-    pOneLeftPressed = true
-  }
+// const keyDownHandler = (e: KeyboardEvent): void => {
+//   // Player 1 left/right controls
+//   if (e.key === "d") {
+//     pOneRightPressed = true
+//   } else if (e.key === "a") {
+//     pOneLeftPressed = true
+//   }
+//
+//   // Player 2 left/right controls
+//   if (e.key === "Right" || e.key === "ArrowRight") {
+//     pTwoRightPressed = true
+//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
+//     pTwoLeftPressed = true
+//   }
+//
+//   // Jumping
+//   if (e.key === "w") {
+//     player1.isJumping = true
+//   }
+//   if (e.key === "Up" || e.key === "ArrowUp") {
+//     player2.isJumping = true
+//   }
+// }
 
-  // Player 2 left/right controls
-  if (e.key === "Right" || e.key === "ArrowRight") {
-    pTwoRightPressed = true
-  } else if (e.key === "Left" || e.key === "ArrowLeft") {
-    pTwoLeftPressed = true
-  }
-
-  // Jumping
-  if (e.key === "w") {
-    player1.isJumping = true
-  }
-  if (e.key === "Up" || e.key === "ArrowUp") {
-    player2.isJumping = true
-  }
-}
-
-const keyUpHandler = (e: KeyboardEvent): void => {
-  // Player 1 left/right controls
-  if (e.key === "d") {
-    pOneRightPressed = false
-  } else if (e.key === "a") {
-    pOneLeftPressed = false
-  }
-
-  // Player 2 left/right controls
-  if (e.key === "Right" || e.key === "ArrowRight") {
-    pTwoRightPressed = false
-  } else if (e.key === "Left" || e.key === "ArrowLeft") {
-    pTwoLeftPressed = false
-  }
-}
+// const keyUpHandler = (e: KeyboardEvent): void => {
+//   // Player 1 left/right controls
+//   if (e.key === "d") {
+//     pOneRightPressed = false
+//   } else if (e.key === "a") {
+//     pOneLeftPressed = false
+//   }
+//
+//   // Player 2 left/right controls
+//   if (e.key === "Right" || e.key === "ArrowRight") {
+//     pTwoRightPressed = false
+//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
+//     pTwoLeftPressed = false
+//   }
+// }
 
 const updateJumps = (player: player):void => {
   // Initially, dy is negative, so by decreasing y we're getting further awawy from the bottom of the canvas
@@ -380,8 +381,8 @@ const draw = () => {
 
 
 // EVENT LISTENERS
-document.addEventListener("keydown", keyDownHandler)
-document.addEventListener("keyup", keyUpHandler)
+// document.addEventListener("keydown", keyDownHandler)
+// document.addEventListener("keyup", keyUpHandler)
 
 
 // SOCKETS

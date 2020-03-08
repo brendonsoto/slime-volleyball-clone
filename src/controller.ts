@@ -35,6 +35,15 @@ form.addEventListener("submit", e => {
   formContainer.remove()
 })
 
+// Socket
+socket.on("player assign", num => {
+  const color: string = num === 1 ?  "green" : "red"
+  Array.prototype.forEach.call(
+    document.getElementsByClassName("btn"),
+    elem => { elem.style.backgroundColor = color }
+  )
+})
+
 // Actions
 left.addEventListener("touchstart", e => {
   e.preventDefault()

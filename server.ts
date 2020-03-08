@@ -55,12 +55,16 @@ io.on("connection", (socket) => {
 
   socket.on("join room", function (id: string) {
     try {
-      rooms[id].players = [...rooms[id].players, socket.id]
       socket.join(id)
-      console.log("connected!")
-      console.log(rooms)
+      rooms[id].players.push(socket.id)
+      if (rooms[id].players.length === 1) {
+        socket.emit("player assign", 1)
+      }
+      if (rooms[id].players.length === 2) {
+        socket.emit("player assign", 2)
+      }
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   })
 
@@ -78,7 +82,7 @@ io.on("connection", (socket) => {
     try {
       rooms[roomId].players = rooms[roomId].players.filter(id => id !== playerId)
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   })
 
