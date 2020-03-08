@@ -1,38 +1,5 @@
 import io from "socket.io-client"
 
-// SOCKETS
-const socket = io("http://localhost:9000")
-const handleGameAction = (data: gameAction) => {
-  const { move, playerNum } = data;
-
-  if (move === "left") {
-    if (playerNum === 0) { pOneLeftPressed = true }
-    if (playerNum === 1) { pTwoLeftPressed = true }
-  }
-
-  if (move === "right") {
-    if (playerNum === 0) { pOneRightPressed = true }
-    if (playerNum === 1) { pTwoRightPressed = true }
-  }
-
-  if (move === "jump") {
-    if (playerNum === 0) { player1.isJumping = true }
-    if (playerNum === 1) { player2.isJumping = true }
-  }
-
-  if (move === "stop") {
-    if (playerNum === 0) {
-      pOneLeftPressed = false
-      pOneRightPressed = false
-    }
-    if (playerNum === 1) {
-      pTwoLeftPressed = false
-      pTwoRightPressed = false
-    }
-  }
-}
-
-socket.on("gameAction", handleGameAction)
 
 // INTERFACES
 interface player {
@@ -56,8 +23,9 @@ interface gameAction {
   playerNum: number
 }
 
-// Canvas stuff
+// Canvas + DOM getting stuff
 const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")
+const idContainer = <HTMLElement> document.getElementById("join-code")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 
 
@@ -130,6 +98,40 @@ const gravity: number = 0.1
 
 
 // HELPERS
+const handleGameAction = (data: gameAction) => {
+  const { move, playerNum } = data;
+
+  if (move === "left") {
+    if (playerNum === 0) { pOneLeftPressed = true }
+    if (playerNum === 1) { pTwoLeftPressed = true }
+  }
+
+  if (move === "right") {
+    if (playerNum === 0) { pOneRightPressed = true }
+    if (playerNum === 1) { pTwoRightPressed = true }
+  }
+
+  if (move === "jump") {
+    if (playerNum === 0) { player1.isJumping = true }
+    if (playerNum === 1) { player2.isJumping = true }
+  }
+
+  if (move === "stop") {
+    if (playerNum === 0) {
+      pOneLeftPressed = false
+      pOneRightPressed = false
+    }
+    if (playerNum === 1) {
+      pTwoLeftPressed = false
+      pTwoRightPressed = false
+    }
+  }
+}
+
+const handleRecievedRoomId = id => {
+  idContainer.innerText = `Join the game by visiting ${location.href}/controller.html and enter this code: ${id}`
+}
+
 const keyDownHandler = (e: KeyboardEvent): void => {
   // Player 1 left/right controls
   if (e.key === "d") {
@@ -380,6 +382,12 @@ const draw = () => {
 // EVENT LISTENERS
 document.addEventListener("keydown", keyDownHandler)
 document.addEventListener("keyup", keyUpHandler)
+
+
+// SOCKETS
+const socket = io("http://localhost:9000")
+socket.on("gameAction", handleGameAction)
+socket.on("room Id", handleRecievedRoomId)
 
 
 // MAIN

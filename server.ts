@@ -34,13 +34,19 @@ function handler (req, res) {
   }
 }
 
+let rooms = {}
 let players = []
 
 io.on("connection", (socket) => {
   // Using the referer to check what page the user is on
-  // Assigning players only if they're on the controller page
+  // If on home page, create a room
+  // Else assigning players only if they're on the controller page
   // Using the socket.id to identify players
-  if (socket.handshake.headers.referer.includes("controller")) {
+  if (!socket.handshake.headers.referer.includes("controller")) {
+    const id = Math.random().toString(36).substring(6)
+    rooms[id] = { players: [] }
+    socket.emit("room Id", id)
+  } else if (socket.handshake.headers.referer.includes("controller")) {
     players = [...players, socket.id]
   }
 
