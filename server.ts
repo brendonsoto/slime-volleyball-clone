@@ -2,6 +2,11 @@ const app = require("http").createServer(handler)
 const io = require("socket.io")(app)
 const fs = require("fs")
 
+interface gameAction {
+  roomId: string,
+  move: string
+}
+
 app.listen(9000)
 
 function get404 (res) {
@@ -35,7 +40,6 @@ function handler (req, res) {
 }
 
 let rooms = {}
-let players = []
 
 io.on("connection", (socket) => {
   // Using the referer to check what page the user is on
@@ -43,26 +47,45 @@ io.on("connection", (socket) => {
   // Else assigning players only if they're on the controller page
   // Using the socket.id to identify players
   if (!socket.handshake.headers.referer.includes("controller")) {
-    const id = Math.random().toString(36).substring(6)
+    const id = socket.id.slice(0, 8)
     rooms[id] = { players: [] }
     socket.emit("room Id", id)
-  } else if (socket.handshake.headers.referer.includes("controller")) {
-    players = [...players, socket.id]
+    socket.join(id)
   }
+
+  socket.on("join room", function (id: string) {
+    try {
+      rooms[id].players = [...rooms[id].players, socket.id]
+      socket.join(id)
+      console.log("connected!")
+      console.log(rooms)
+    } catch (e) {
+      console.log(e)
+    }
+  })
 
   // Using `function` instead of arrow to referrence the socket object
   // Using indices of the players array to determine player 1, 2, etc.
   // Sending the player number to allow the client to handle how to react
-  socket.on("controller event", function (data: object) {
-    const playerNum = players.indexOf(this.id)
-    socket.broadcast.emit("gameAction", { ...data, playerNum })
+  socket.on("controller event", function (data: gameAction) {
+    const { roomId } = data
+    const playerNum = rooms[roomId].players.indexOf(this.id)
+    socket.to(roomId).emit("gameAction", { ...data, playerNum })
+  })
+
+  socket.on("player disconnect", function (roomId) {
+    const playerId = this.id
+    try {
+      rooms[roomId].players = rooms[roomId].players.filter(id => id !== playerId)
+    } catch (e) {
+      console.log(e)
+    }
   })
 
   socket.on("disconnect", function () {
-    const pageDisconnectingFrom = this.handshake.headers.referer
-    const playerId = this.id
-    if (pageDisconnectingFrom.includes("controller")) {
-      players = players.filter(id => id !== playerId)
+    const roomId = this.id
+    if (Object.keys(rooms).includes(roomId)) {
+      delete rooms[roomId]
     }
   })
 })

@@ -22,5 +22,11 @@ Because the game has simple rules and focuses on the movements of two characters
   - [ ] Add sound effects
   - [ ] Add indicators as to who's player one and who's player two (maybe with colors?)
   - [ ] Add types
-- [ ] Server polish:
-  - [ ] Add rooms and hashes to isolate players
+- [X] Server polish:
+  - [X] Add rooms and hashes to isolate players
+
+
+## Adding rooms
+There's the concept of "rooms" in socket.io which sounds exactly like what I need.
+I need to create a hash or something to represent a room.
+Then the controller page needs to first have an entry screen with a text box to enter the hash of the room to join.
