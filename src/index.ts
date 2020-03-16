@@ -25,6 +25,7 @@ interface gameAction {
 
 
 // Canvas + DOM getting stuff
+const playAgainBtn = <HTMLCanvasElement> document.getElementById("play-again")
 const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")
 const idContainer = <HTMLElement> document.getElementById("join-code")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
@@ -100,7 +101,7 @@ const gravity: number = 0.1
 
 // HELPERS
 const handleGameAction = (data: gameAction) => {
-  const { move, playerNum } = data;
+  const { move, playerNum } = data
 
   if (move === "left") {
     if (playerNum === 0) { pOneLeftPressed = true }
@@ -132,46 +133,6 @@ const handleGameAction = (data: gameAction) => {
 const handleRecievedRoomId = id => {
   idContainer.innerText = `Join the game by visiting ${location.href}/controller.html and enter this code: ${id}`
 }
-
-// const keyDownHandler = (e: KeyboardEvent): void => {
-//   // Player 1 left/right controls
-//   if (e.key === "d") {
-//     pOneRightPressed = true
-//   } else if (e.key === "a") {
-//     pOneLeftPressed = true
-//   }
-//
-//   // Player 2 left/right controls
-//   if (e.key === "Right" || e.key === "ArrowRight") {
-//     pTwoRightPressed = true
-//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
-//     pTwoLeftPressed = true
-//   }
-//
-//   // Jumping
-//   if (e.key === "w") {
-//     player1.isJumping = true
-//   }
-//   if (e.key === "Up" || e.key === "ArrowUp") {
-//     player2.isJumping = true
-//   }
-// }
-
-// const keyUpHandler = (e: KeyboardEvent): void => {
-//   // Player 1 left/right controls
-//   if (e.key === "d") {
-//     pOneRightPressed = false
-//   } else if (e.key === "a") {
-//     pOneLeftPressed = false
-//   }
-//
-//   // Player 2 left/right controls
-//   if (e.key === "Right" || e.key === "ArrowRight") {
-//     pTwoRightPressed = false
-//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
-//     pTwoLeftPressed = false
-//   }
-// }
 
 const updateJumps = (player: player):void => {
   // Initially, dy is negative, so by decreasing y we're getting further awawy from the bottom of the canvas
@@ -303,6 +264,15 @@ const collisionDetection = ():void => {
   }
 }
 
+const resetGame = () => {
+  resetPositions()
+  playAgainBtn.style.display = "none"
+  player1.score = 0
+  player2.score = 0
+  ball.x = ballStartingPointOne
+  draw()
+}
+
 
 // DRAWING
 const drawWall = () => {
@@ -346,13 +316,14 @@ const drawGameOver = (): void => {
   const winner = player1.score > player2.score
     ? "Player 1"
     : "Player 2"
-  ctx.font = "48px Helvetica, sans-serif"
+  ctx.font = "48px sans-serif"
   ctx.textAlign = "center"
   ctx.fillText(
     `${winner} wins!!`,
     canvas.width / 2,
-    canvas.height / 2 + 24
+    canvas.height / 2
   )
+  playAgainBtn.style.display = "block"
 }
 
 const draw = () => {
@@ -380,9 +351,50 @@ const draw = () => {
 }
 
 
-// EVENT LISTENERS
+// MOUSE EVENT LISTENERS -- use for dev purpose
+// const keyDownHandler = (e: KeyboardEvent): void => {
+//   // Player 1 left/right controls
+//   if (e.key === "d") {
+//     pOneRightPressed = true
+//   } else if (e.key === "a") {
+//     pOneLeftPressed = true
+//   }
+//
+//   // Player 2 left/right controls
+//   if (e.key === "Right" || e.key === "ArrowRight") {
+//     pTwoRightPressed = true
+//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
+//     pTwoLeftPressed = true
+//   }
+//
+//   // Jumping
+//   if (e.key === "w") {
+//     player1.isJumping = true
+//   }
+//   if (e.key === "Up" || e.key === "ArrowUp") {
+//     player2.isJumping = true
+//   }
+// }
+//
+// const keyUpHandler = (e: KeyboardEvent): void => {
+//   // Player 1 left/right controls
+//   if (e.key === "d") {
+//     pOneRightPressed = false
+//   } else if (e.key === "a") {
+//     pOneLeftPressed = false
+//   }
+//
+//   // Player 2 left/right controls
+//   if (e.key === "Right" || e.key === "ArrowRight") {
+//     pTwoRightPressed = false
+//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
+//     pTwoLeftPressed = false
+//   }
+// }
+//
 // document.addEventListener("keydown", keyDownHandler)
 // document.addEventListener("keyup", keyUpHandler)
+playAgainBtn.addEventListener("click", resetGame)
 
 
 // SOCKETS

@@ -30,17 +30,37 @@ h1 {
   padding: 20px;
 }
 
+#game-container {
+  height: 600px;
+  position: relative;
+}
+
 #join-code {
   font-size: 20px;
   height: 20px;
   line-height: 20px;
   padding: 10px;
 }
+
+#play-again {
+  background-color: #d79921;
+  display: none;
+  font-size: 28px;
+  font-weight: bold;
+  padding: 10px;
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-100px, 48px);
+  width: 200px;
+}
   </style>
 </head>
 <body>
   <h1>Slime Volleyball Clone</h1>
   <div id="join-code"></div>
-  <canvas id="gameRoot" width="1240" height="600"></canvas>
+  <div id="game-container">
+    <canvas id="gameRoot" width="1240" height="600"></canvas>
+    <button id="play-again">Play Again</button>
+  </div>
 </body>
 </html>
