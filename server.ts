@@ -72,9 +72,13 @@ io.on("connection", (socket) => {
   // Using indices of the players array to determine player 1, 2, etc.
   // Sending the player number to allow the client to handle how to react
   socket.on("controller event", function (data: gameAction) {
-    const { roomId } = data
-    const playerNum = rooms[roomId].players.indexOf(this.id)
-    socket.to(roomId).emit("gameAction", { ...data, playerNum })
+    try {
+      const { roomId } = data
+      const playerNum = rooms[roomId].players.indexOf(this.id)
+      socket.to(roomId).emit("gameAction", { ...data, playerNum })
+    } catch (e) {
+      console.error(e)
+    }
   })
 
   socket.on("player disconnect", function (roomId) {
