@@ -27,7 +27,7 @@ module.exports = {
   ],
   output: {
     path: __dirname + "/build",
-    filename: "js/[name].[contenthash].js"
+    filename: "js/[name].[hash].js"
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
@@ -38,6 +38,7 @@ module.exports = {
     ]
   },
   devServer: {
+    hot: true,
     port: 9001
   }
 }
