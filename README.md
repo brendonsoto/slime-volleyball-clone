@@ -22,7 +22,7 @@ Because the game has simple rules and focuses on the movements of two characters
   - [ ] Add sound effects
   - [X] Add indicators as to who's player one and who's player two (maybe with colors?)
   - [ ] Add types
-  - [ ] Add "New Game?" option
+  - [X] Add "New Game?" option
 - [X] Server polish:
   - [X] Add rooms and hashes to isolate players
 

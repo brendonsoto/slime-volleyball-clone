@@ -27,7 +27,6 @@ interface gameAction {
 // Canvas + DOM getting stuff
 const playAgainBtn = <HTMLCanvasElement> document.getElementById("play-again")
 const canvas = <HTMLCanvasElement> document.getElementById("gameRoot")
-const idContainer = <HTMLElement> document.getElementById("join-code")
 const ctx: CanvasRenderingContext2D = canvas.getContext("2d")!
 
 
@@ -101,6 +100,7 @@ const gravity: number = 0.1
 // General game vars
 const roundResetPauseTime = 1000
 let isRoundOver: boolean = false
+// let timeoutId: number = 0
 
 
 // HELPERS
@@ -132,10 +132,6 @@ const handleGameAction = (data: gameAction) => {
       pTwoRightPressed = false
     }
   }
-}
-
-const handleRecievedRoomId = id => {
-  idContainer.innerText = `Join the game by visiting ${location.href}/controller.html and enter this code: ${id}`
 }
 
 const updateJumps = (player: player):void => {
@@ -288,6 +284,58 @@ const resumeGame = ():void => {
 
 
 // DRAWING
+let opacityVal = 0.1
+const drawWaitingForPlayers = (opacity: number = 1): void => {
+  const x: number = canvas.width / 2
+  const y: number = canvas.height / 2 + 100
+  ctx.clearRect(x - 120, y - 25, 300, 100)
+
+  ctx.font = "24px sans-serif"
+  ctx.fillStyle = `rgba(0,0,0,${opacity})`
+  ctx.strokeStyle = `rgba(0,0,0,${opacity})`
+  ctx.fillText("Waiting for players", x, y)
+
+  const newOpacity = opacity + opacityVal
+  if (newOpacity >= 1) { opacityVal = -0.1 }
+  if (newOpacity <= 0) { opacityVal = 0.1 }
+
+  // timeoutId = setTimeout(() => drawWaitingForPlayers(newOpacity), 100)
+  setTimeout(() => drawWaitingForPlayers(newOpacity), 100)
+}
+
+const drawJoinCode = (id: string): void => {
+  ctx.font = "24px sans-serif"
+  ctx.fillText(
+    id,
+    canvas.width / 2,
+    canvas.height / 2 + 60
+  )
+
+  drawWaitingForPlayers()
+  // setTimeout(drawWaitingForPlayers, 2000)
+}
+
+const drawMenu = (): void => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  // Title
+  ctx.font = "60px sans-serif"
+  ctx.textAlign = "center"
+  ctx.fillText(
+    "Slime Volleyball: Couch Edition",
+    canvas.width / 2,
+    canvas.height / 2 - 60
+  )
+
+  // Short blurb
+  ctx.font = "24px sans-serif"
+  ctx.fillText(
+    `Join the game by visiting ${location.href}controller.html and enter the code below:`,
+    canvas.width / 2,
+    canvas.height / 2 + 10
+  )
+}
+
 const drawWall = () => {
   ctx.beginPath()
   ctx.rect(wallX, wallY, wallWidth, wallHeight)
@@ -380,56 +428,59 @@ const draw = () => {
 
 
 // MOUSE EVENT LISTENERS -- use for dev purpose
-// const keyDownHandler = (e: KeyboardEvent): void => {
-//   // Player 1 left/right controls
-//   if (e.key === "d") {
-//     pOneRightPressed = true
-//   } else if (e.key === "a") {
-//     pOneLeftPressed = true
-//   }
-//
-//   // Player 2 left/right controls
-//   if (e.key === "Right" || e.key === "ArrowRight") {
-//     pTwoRightPressed = true
-//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
-//     pTwoLeftPressed = true
-//   }
-//
-//   // Jumping
-//   if (e.key === "w") {
-//     player1.isJumping = true
-//   }
-//   if (e.key === "Up" || e.key === "ArrowUp") {
-//     player2.isJumping = true
-//   }
-// }
-//
-// const keyUpHandler = (e: KeyboardEvent): void => {
-//   // Player 1 left/right controls
-//   if (e.key === "d") {
-//     pOneRightPressed = false
-//   } else if (e.key === "a") {
-//     pOneLeftPressed = false
-//   }
-//
-//   // Player 2 left/right controls
-//   if (e.key === "Right" || e.key === "ArrowRight") {
-//     pTwoRightPressed = false
-//   } else if (e.key === "Left" || e.key === "ArrowLeft") {
-//     pTwoLeftPressed = false
-//   }
-// }
-//
-// document.addEventListener("keydown", keyDownHandler)
-// document.addEventListener("keyup", keyUpHandler)
+if (location.search.includes("dev")) {
+  const keyDownHandler = (e: KeyboardEvent): void => {
+    // Player 1 left/right controls
+    if (e.key === "d") {
+      pOneRightPressed = true
+    } else if (e.key === "a") {
+      pOneLeftPressed = true
+    }
+
+    // Player 2 left/right controls
+    if (e.key === "Right" || e.key === "ArrowRight") {
+      pTwoRightPressed = true
+    } else if (e.key === "Left" || e.key === "ArrowLeft") {
+      pTwoLeftPressed = true
+    }
+
+    // Jumping
+    if (e.key === "w") {
+      player1.isJumping = true
+    }
+    if (e.key === "Up" || e.key === "ArrowUp") {
+      player2.isJumping = true
+    }
+  }
+
+  const keyUpHandler = (e: KeyboardEvent): void => {
+    // Player 1 left/right controls
+    if (e.key === "d") {
+      pOneRightPressed = false
+    } else if (e.key === "a") {
+      pOneLeftPressed = false
+    }
+
+    // Player 2 left/right controls
+    if (e.key === "Right" || e.key === "ArrowRight") {
+      pTwoRightPressed = false
+    } else if (e.key === "Left" || e.key === "ArrowLeft") {
+      pTwoLeftPressed = false
+    }
+  }
+
+  document.addEventListener("keydown", keyDownHandler)
+  document.addEventListener("keyup", keyUpHandler)
+}
+
 playAgainBtn.addEventListener("click", resetGame)
 
 
 // SOCKETS
 const socket = io("http://localhost:9000")
 socket.on("gameAction", handleGameAction)
-socket.on("room Id", handleRecievedRoomId)
+socket.on("room Id", drawJoinCode)
 
 
 // MAIN
-draw()
+drawMenu()
