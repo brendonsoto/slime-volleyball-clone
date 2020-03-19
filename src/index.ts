@@ -98,6 +98,10 @@ const gravity: number = 0.1
 // const velocityReduction: number = 0.8
 // const collisionRadius: number = playerRadius + ballRadius
 
+// General game vars
+const roundResetPauseTime = 1000
+let isRoundOver: boolean = false
+
 
 // HELPERS
 const handleGameAction = (data: gameAction) => {
@@ -147,7 +151,7 @@ const updateJumps = (player: player):void => {
   }
 }
 
-const determinePlayerMovements = ():void => {
+const determinePlayerPositions = ():void => {
   // Player 1 -- left/right
   if (pOneLeftPressed) {
     const newPos = player1.x - playerDeltaX
@@ -199,38 +203,9 @@ const resetPositions = (): void => {
 }
 
 const updateBall = ():void => {
-  // Update velocity
   ball.dy += gravity
-
   ball.x += ball.dx
   ball.y += ball.dy
-
-  if (ball.y > canvas.height - ballRadius) {
-    resetPositions()
-  }
-
-  // Check if the ball is hitting the left or right walls and invert direction if so
-  if (
-    ball.x - ballRadius <= 0 ||
-    ball.x + ballRadius >= canvas.width
-  ) {
-    ball.dx *= -1
-  }
-
-  // Check if the ball is hitting the wall and invert direction if so
-  if (
-    ball.x + ballRadius >= wallLeftBoundary &&
-    ball.x - ballRadius <= wallRightBoundary &&
-    ball.y >= wallY
-  ) {
-    // Check if the ball hits the top of the wall and reverse vertical direction
-    if (ball.y === wallY || ball.y < wallY + 5) {
-      ball.dy *= -1
-    } else {
-      // If it does not, then reverse horizontal direction
-      ball.dx *= -1
-    }
-  }
 }
 
 // Super basic collision detection
@@ -257,6 +232,36 @@ const checkContact = (player: player):void => {
 }
 
 const collisionDetection = ():void => {
+  // Check if the ball has hit the ground
+  if (ball.y > canvas.height - ballRadius && !isGameOver()) {
+    isRoundOver = true
+    resetPositions()
+  }
+
+  // Check if the ball is hitting the left or right walls and invert direction if so
+  if (
+    ball.x - ballRadius <= 0 ||
+    ball.x + ballRadius >= canvas.width
+  ) {
+    ball.dx *= -1
+  }
+
+  // Check if the ball is hitting the wall and invert direction if so
+  if (
+    ball.x + ballRadius >= wallLeftBoundary &&
+    ball.x - ballRadius <= wallRightBoundary &&
+    ball.y >= wallY
+  ) {
+    // Check if the ball hits the top of the wall and reverse vertical direction
+    if (ball.y === wallY || ball.y < wallY + 5) {
+      ball.dy *= -1
+    } else {
+      // If it does not, then reverse horizontal direction
+      ball.dx *= -1
+    }
+  }
+
+  // Check if there's player contact
   if (ball.x < wallLeftBoundary) {
     checkContact(player1)
   } else if (ball.x > wallRightBoundary) {
@@ -264,12 +269,20 @@ const collisionDetection = ():void => {
   }
 }
 
+const isGameOver = ():boolean => player1.score === scoreToWin ||
+  player2.score === scoreToWin
+
 const resetGame = () => {
   resetPositions()
   playAgainBtn.style.display = "none"
   player1.score = 0
   player2.score = 0
   ball.x = ballStartingPointOne
+  draw()
+}
+
+const resumeGame = ():void => {
+  isRoundOver = false
   draw()
 }
 
@@ -312,6 +325,16 @@ const drawBall = (): void => {
   ctx.closePath()
 }
 
+const drawReady = (): void => {
+  ctx.font = "48px sans-serif"
+  ctx.textAlign = "center"
+  ctx.fillText(
+    "Ready",
+    canvas.width / 2,
+    canvas.height / 2
+  )
+}
+
 const drawGameOver = (): void => {
   const winner = player1.score > player2.score
     ? "Player 1"
@@ -329,10 +352,8 @@ const drawGameOver = (): void => {
 const draw = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  if (player1.score === scoreToWin || player2.score === scoreToWin) {
-    drawGameOver()
-    return
-  }
+  // Early return if game is over
+  if (isGameOver()) { return drawGameOver() }
 
   // Draw
   drawWall()
@@ -341,13 +362,20 @@ const draw = () => {
   drawPlayer(player2)
   drawScore()
 
-  // Update positioning
-  updateBall()
-  determinePlayerMovements()
-  collisionDetection()
+  // If the round is over, reset positions and delay starting the next round
+  // so the players can mentally register a new round is happening
+  if (isRoundOver) {
+    setTimeout(resumeGame, roundResetPauseTime)
+    drawReady()
+  } else {
+    // Update positioning
+    updateBall()
+    determinePlayerPositions()
+    collisionDetection()
 
-  // Queue next frame
-  requestAnimationFrame(draw)
+    // Queue next frame
+    requestAnimationFrame(draw)
+  }
 }
 
 
