@@ -45,22 +45,22 @@ socket.on("player assign", num => {
 })
 
 // Actions
-left.addEventListener("touchstart", e => {
+left.addEventListener("mousedown", e => {
   e.preventDefault()
   isMouseDown = true
   triggerMouseDownLoop(createSocketData({ move: "left" }))()
 })
-left.addEventListener("touchend", e => {
+left.addEventListener("mouseup", e => {
   e.preventDefault()
   isMouseDown = false
   socket.emit("controller event", createSocketData({ move: "stop" }))
 })
-right.addEventListener("touchstart", e => {
+right.addEventListener("mousedown", e => {
   e.preventDefault()
   isMouseDown = true
   triggerMouseDownLoop(createSocketData({ move: "right" }))()
 })
-right.addEventListener("touchend", e => {
+right.addEventListener("mouseup", e => {
   e.preventDefault()
   isMouseDown = false
   socket.emit("controller event", createSocketData({ move: "stop" }))

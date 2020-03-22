@@ -56,9 +56,8 @@ const playerOneStartingPoint: number = playerOneRightBoundary / 2
 const playerTwoStartingPoint: number = (wallRightBoundary + playerTwoRightBoundary) / 2
 
 // Ball positioning and dimensions
-const ballStartingPointOne: number = playerOneStartingPoint + playerRadius
-// const ballStartingPointTwo: number = playerTwoStartingPoint + playerRadius
-const ballRadius = playerRadius / 2
+const ballStartingPoint: number = playerOneStartingPoint + playerRadius
+const ballRadius: number = playerRadius / 2
 
 // Flags to indicate movement.
 // Not attached to player objects to save having to traverse through an object
@@ -85,7 +84,7 @@ let player2: player = {
   score: 0
 }
 let ball: ball = {
-  x: ballStartingPointOne,
+  x: ballStartingPoint,
   y: canvas.height / 2,
   dx: 0,
   dy: 0
@@ -94,20 +93,21 @@ let ball: ball = {
 // Physics vars
 // kudos to http://physicscodes.com/bouncing-ball-simulation-in-javascript-on-html5-canvas/
 const gravity: number = 0.1
-// const velocityReduction: number = 0.8
-// const collisionRadius: number = playerRadius + ballRadius
 
 // General game vars
-const roundResetPauseTime = 1000
+const roundResetPauseTime: number = 1000
 let numPlayersThatCanJoin: number = 2
 let waitingMsgOpacity: number = 0.1
 let isGameStarting: boolean = false
 let isRoundOver: boolean = false
-let timeoutId = null
+let timeoutId: ReturnType<typeof setTimeout> = null
 
 
 // HELPERS
-const handleGameAction = (data: gameAction) => {
+/**
+ * This is a function used for translating events from websockets to game actions
+ */
+const handleGameAction = (data: gameAction): void => {
   const { move, playerNum } = data
 
   if (move === "left") {
@@ -137,6 +137,11 @@ const handleGameAction = (data: gameAction) => {
   }
 }
 
+/**
+ * This mutates a global variable used in the initial menu to communicate
+ * how many players can join.
+ * If no more players can join, the game starts
+ */
 const handlePlayerJoin = (): void => {
   numPlayersThatCanJoin = numPlayersThatCanJoin - 1
 
@@ -147,7 +152,7 @@ const handlePlayerJoin = (): void => {
   }
 }
 
-const updateJumps = (player: player):void => {
+const updateJumps = (player: player): void => {
   // Initially, dy is negative, so by decreasing y we're getting further awawy from the bottom of the canvas
   player.y += player.dy
 
@@ -160,7 +165,7 @@ const updateJumps = (player: player):void => {
   }
 }
 
-const determinePlayerPositions = ():void => {
+const determinePlayerPositions = (): void => {
   // Player 1 -- left/right
   if (pOneLeftPressed) {
     const newPos = player1.x - playerDeltaX
@@ -211,14 +216,14 @@ const resetPositions = (): void => {
   ball.dx = 0
 }
 
-const updateBall = ():void => {
+const updateBall = (): void => {
   ball.dy += gravity
   ball.x += ball.dx
   ball.y += ball.dy
 }
 
 // Super basic collision detection
-const checkContact = (player: player):void => {
+const checkContact = (player: player): void => {
   const dx = (player.x + playerRadius) - (ball.x)
   const dy = (player.y) - (ball.y)
   const radii = playerRadius + ballRadius
@@ -240,7 +245,7 @@ const checkContact = (player: player):void => {
   }
 }
 
-const collisionDetection = ():void => {
+const collisionDetection = (): void => {
   // Check if the ball has hit the ground
   if (ball.y > canvas.height - ballRadius && !isGameOver()) {
     isRoundOver = true
@@ -278,19 +283,19 @@ const collisionDetection = ():void => {
   }
 }
 
-const isGameOver = ():boolean => player1.score === scoreToWin ||
+const isGameOver = (): boolean => player1.score === scoreToWin ||
   player2.score === scoreToWin
 
-const resetGame = () => {
+const resetGame = (): void => {
   resetPositions()
   playAgainBtn.style.display = "none"
   player1.score = 0
   player2.score = 0
-  ball.x = ballStartingPointOne
+  ball.x = ballStartingPoint
   draw()
 }
 
-const resumeGame = ():void => {
+const resumeGame = (): void => {
   isGameStarting = false
   isRoundOver = false
   draw()
@@ -304,14 +309,14 @@ const drawWaitingForPlayers = (opacity: number = 1): void => {
   const message:string = numPlayersThatCanJoin > 1 ?
     `Waiting for ${numPlayersThatCanJoin} players...` :
     "Waiting for one more player..."
-  ctx.clearRect(x - 200, y - 25, 400, 100)
+  const newOpacity = opacity + waitingMsgOpacity
 
+  ctx.clearRect(x - 200, y - 25, 400, 100)
   ctx.font = "24px sans-serif"
   ctx.fillStyle = `rgba(0,0,0,${opacity})`
   ctx.strokeStyle = `rgba(0,0,0,${opacity})`
   ctx.fillText(message, x, y)
 
-  const newOpacity = opacity + waitingMsgOpacity
   if (newOpacity >= 1) { waitingMsgOpacity = -0.1 }
   if (newOpacity <= 0) { waitingMsgOpacity = 0.1 }
 
@@ -320,11 +325,7 @@ const drawWaitingForPlayers = (opacity: number = 1): void => {
 
 const drawJoinCode = (id: string): void => {
   ctx.font = "24px sans-serif"
-  ctx.fillText(
-    id,
-    canvas.width / 2,
-    canvas.height / 2 + 60
-  )
+  ctx.fillText(id, canvas.width / 2, canvas.height / 2 + 60)
 
   drawWaitingForPlayers()
 }
@@ -350,7 +351,7 @@ const drawMenu = (): void => {
   )
 }
 
-const drawWall = () => {
+const drawWall = (): void => {
   ctx.beginPath()
   ctx.rect(wallX, wallY, wallWidth, wallHeight)
   ctx.fillStyle = "black"
@@ -358,7 +359,7 @@ const drawWall = () => {
   ctx.closePath()
 }
 
-const drawPlayer = (player: player) => {
+const drawPlayer = (player: player): void => {
   ctx.beginPath()
   ctx.arc(
     player.x + playerRadius,
@@ -411,7 +412,7 @@ const drawGameOver = (): void => {
   playAgainBtn.style.display = "block"
 }
 
-const draw = () => {
+const draw = (): void => {
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   // Early return if game is over
