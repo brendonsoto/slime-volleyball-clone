@@ -59,9 +59,11 @@ io.on("connection", (socket) => {
       rooms[id].players.push(socket.id)
       if (rooms[id].players.length === 1) {
         socket.emit("player assign", 1)
+        socket.to(id).emit("player joined")
       }
       if (rooms[id].players.length === 2) {
         socket.emit("player assign", 2)
+        socket.to(id).emit("player joined")
       }
     } catch (e) {
       console.error(e)

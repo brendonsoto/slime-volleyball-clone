@@ -99,8 +99,11 @@ const gravity: number = 0.1
 
 // General game vars
 const roundResetPauseTime = 1000
+let numPlayersThatCanJoin: number = 2
+let waitingMsgOpacity: number = 0.1
+let isGameStarting: boolean = false
 let isRoundOver: boolean = false
-// let timeoutId: number = 0
+let timeoutId = null
 
 
 // HELPERS
@@ -131,6 +134,16 @@ const handleGameAction = (data: gameAction) => {
       pTwoLeftPressed = false
       pTwoRightPressed = false
     }
+  }
+}
+
+const handlePlayerJoin = (): void => {
+  numPlayersThatCanJoin = numPlayersThatCanJoin - 1
+
+  if (numPlayersThatCanJoin === 0) {
+    clearTimeout(timeoutId)
+    isGameStarting = true
+    draw()
   }
 }
 
@@ -278,29 +291,31 @@ const resetGame = () => {
 }
 
 const resumeGame = ():void => {
+  isGameStarting = false
   isRoundOver = false
   draw()
 }
 
 
 // DRAWING
-let opacityVal = 0.1
 const drawWaitingForPlayers = (opacity: number = 1): void => {
   const x: number = canvas.width / 2
   const y: number = canvas.height / 2 + 100
-  ctx.clearRect(x - 120, y - 25, 300, 100)
+  const message:string = numPlayersThatCanJoin > 1 ?
+    `Waiting for ${numPlayersThatCanJoin} players...` :
+    "Waiting for one more player..."
+  ctx.clearRect(x - 200, y - 25, 400, 100)
 
   ctx.font = "24px sans-serif"
   ctx.fillStyle = `rgba(0,0,0,${opacity})`
   ctx.strokeStyle = `rgba(0,0,0,${opacity})`
-  ctx.fillText("Waiting for players", x, y)
+  ctx.fillText(message, x, y)
 
-  const newOpacity = opacity + opacityVal
-  if (newOpacity >= 1) { opacityVal = -0.1 }
-  if (newOpacity <= 0) { opacityVal = 0.1 }
+  const newOpacity = opacity + waitingMsgOpacity
+  if (newOpacity >= 1) { waitingMsgOpacity = -0.1 }
+  if (newOpacity <= 0) { waitingMsgOpacity = 0.1 }
 
-  // timeoutId = setTimeout(() => drawWaitingForPlayers(newOpacity), 100)
-  setTimeout(() => drawWaitingForPlayers(newOpacity), 100)
+  timeoutId = setTimeout(() => drawWaitingForPlayers(newOpacity), 100)
 }
 
 const drawJoinCode = (id: string): void => {
@@ -312,7 +327,6 @@ const drawJoinCode = (id: string): void => {
   )
 
   drawWaitingForPlayers()
-  // setTimeout(drawWaitingForPlayers, 2000)
 }
 
 const drawMenu = (): void => {
@@ -412,7 +426,7 @@ const draw = () => {
 
   // If the round is over, reset positions and delay starting the next round
   // so the players can mentally register a new round is happening
-  if (isRoundOver) {
+  if (isGameStarting || isRoundOver) {
     setTimeout(resumeGame, roundResetPauseTime)
     drawReady()
   } else {
@@ -480,6 +494,7 @@ playAgainBtn.addEventListener("click", resetGame)
 const socket = io("http://localhost:9000")
 socket.on("gameAction", handleGameAction)
 socket.on("room Id", drawJoinCode)
+socket.on("player joined", handlePlayerJoin)
 
 
 // MAIN
